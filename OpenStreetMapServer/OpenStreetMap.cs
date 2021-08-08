@@ -35,15 +35,18 @@ namespace OpenStreetMapServer
       bool flag;
       try
       {
-        HttpWebResponse response = (HttpWebResponse) ((HttpWebRequest) WebRequest.Create(requestUriString)).GetResponse();
-        if (response.ContentType.IndexOf("image") > -1)
+     // HttpWebResponse response = (HttpWebResponse)((HttpWebRequest)WebRequest.Create(requestUriString)).GetResponse();
+        HttpWebRequest TileRequest = (HttpWebRequest)WebRequest.Create(requestUriString);
+        TileRequest.UserAgent = "OpenStreetMap Tile Plugin for SbuilderX/3.15";             // Added User-Agent string to comply with OSM policy
+        HttpWebResponse TileResponse = (HttpWebResponse)TileRequest.GetResponse();
+        if (TileResponse.ContentType.IndexOf("image") > -1)
         {
-          Image.FromStream(response.GetResponseStream()).Save(Filename);
+          Image.FromStream(TileResponse.GetResponseStream()).Save(Filename);
           flag = true;
         }
         else
           flag = false;
-        response.Close();
+          TileResponse.Close();
       }
       catch (Exception ex)
       {
